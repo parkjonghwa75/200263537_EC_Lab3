@@ -8,10 +8,7 @@
 
     <fieldset>
         <label for="txtDepartment" class="col-sm-2">Department:</label>
-        <asp:DropDownList ID="ddlDepartment" runat="server" AutoPostBack="true">
-            <asp:ListItem Value="sample1" Text="sample1" />
-            <asp:ListItem Value="sample2" Text="sample2" />
-            <asp:ListItem Value="sample3" Text="sample3" />
+        <asp:DropDownList ID="ddlDepartment" runat="server" >
         </asp:DropDownList>
     </fieldset>
     <fieldset>

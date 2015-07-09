@@ -15,23 +15,35 @@ namespace lesson9
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if save wasn't clicked AND we have a StudentID in the url
+
+            //
             if ((!IsPostBack) && (Request.QueryString.Count > 0))
             {
                 GetCourses();
-
+            }
+            else if (!IsPostBack)
+            {
+                using (comp2007Entities db = new comp2007Entities())
+                {
+                    var departmentDDL = from d in db.Departments select new { d.DepartmentID, d.Name };
+                    ddlDepartment.DataSource = departmentDDL.ToList();
+                    ddlDepartment.DataValueField = "DepartmentID";
+                    ddlDepartment.DataTextField = "Name";
+                    ddlDepartment.DataBind();
+                    ddlDepartment.Items.Insert(0, "Select");
+                }
             }
         }
 
         protected void GetCourses()
         {
-            //populate form with existing student record
+            //
             Int32 CourseID = Convert.ToInt32(Request.QueryString["CourseID"]);
 
             //connect to db via EF
             using (comp2007Entities db = new comp2007Entities())
             {
-                //populate a student instance with the StudentID from the URL parameter
+                //
                 Course c = (from objS in db.Courses
                             where objS.CourseID == CourseID
                              select objS).FirstOrDefault();
@@ -39,10 +51,13 @@ namespace lesson9
                 //map the student properties to the form controls if we found a match
                 if (c != null)
                 {
-                    ddlDepartment.SelectedValue = c.Department.Name;
+
+                    ddlDepartment.SelectedIndex = c.DepartmentID;
+                    //ddlDepartment.SelectedValue=
                     txtCourseTitle.Text = c.Title;
                     txtCredits.Text = c.Credits.ToString();
                 }
+
 
 
                 //enrollments - this code goes in the same method that populates the student form but below the existing code that's already in GetStudent()               
@@ -80,7 +95,7 @@ namespace lesson9
                          select objS).FirstOrDefault();
                 }
 
-                c.DepartmentID = Convert.ToInt32(ddlDepartment.SelectedValue);
+                c.DepartmentID = Convert.ToInt32(ddlDepartment.SelectedIndex);
  
                 c.Title = txtCourseTitle.Text;
                 c.Credits = Convert.ToInt32(txtCredits.Text);
@@ -116,6 +131,11 @@ namespace lesson9
 
                 GetCourses();
             }
+        }
+
+        protected void ddlDepartment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
